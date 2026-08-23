@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>隐私政策 / Privacy Policy — Vaultwarden Offline</title>
+<meta name="description" content="Vaultwarden Offline 隐私政策：不收集、不上传、不出售任何数据。Privacy policy for Vaultwarden Offline: no collection, no upload, no sale of any data.">
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f6f7f9;
+    --bg-note: #fff8e6;
+    --border: #e3e6ea;
+    --border-strong: #d0d5db;
+    --text: #1c1f23;
+    --text-soft: #5c636b;
+    --accent: #175ddc;
+    --accent-soft: #e8f0fe;
+    --note-border: #e0b53c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181c;
+      --bg-soft: #1e2126;
+      --bg-note: #2b2618;
+      --border: #2c3138;
+      --border-strong: #3a4048;
+      --text: #e6e8eb;
+      --text-soft: #9aa2ac;
+      --accent: #6ea8fe;
+      --accent-soft: #1c2a40;
+      --note-border: #8a7226;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 20px 80px; }
+
+  header {
+    padding: 48px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  header h1 { font-size: 1.9rem; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  header .product { color: var(--text-soft); font-size: 1rem; margin: 0 0 18px; }
+  header .meta { color: var(--text-soft); font-size: 0.875rem; margin: 0; }
+  header .meta code { font-family: var(--mono); font-size: 0.85em; }
+
+  .langbar { display: flex; gap: 8px; margin: 22px 0 0; }
+  .langbar button {
+    font: inherit;
+    font-size: 0.875rem;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .langbar button:hover { border-color: var(--accent); color: var(--accent); }
+  .langbar button[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin: 44px 0 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    letter-spacing: -0.005em;
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 1.4em; }
+  li { margin-bottom: 6px; }
+
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    word-break: break-word;
+  }
+
+  .lede {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 24px 0 8px;
+  }
+  .lede p:last-child { margin-bottom: 0; }
+
+  .note {
+    background: var(--bg-note);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--note-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 18px 0;
+  }
+  .note p:last-child { margin-bottom: 0; }
+
+  .scroll { overflow-x: auto; margin: 0 0 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; min-width: 520px; }
+  th, td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 600; }
+  td code { background: transparent; border: none; padding: 0; }
+
+  ol { margin: 0 0 14px; padding-left: 1.4em; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 0.875rem;
+  }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+    header { padding-top: 32px; }
+    header h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1 id="title">隐私政策</h1>
+  <p class="product">Vaultwarden Offline</p>
+  <p class="meta" id="meta">最后更新：2026-08-23 · 适用版本：v2026.8.6 及以后</p>
+  <nav class="langbar">
+    <button type="button" data-lang="zh" aria-pressed="true">中文</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  </nav>
+</header>
+
+<!-- ==================== 中文 ==================== -->
+<main id="zh">
+
+  <div class="lede">
+    <p><strong>本扩展不收集、不上传、不出售你的任何数据。开发者收不到任何信息——因为本项目没有服务器。</strong></p>
+    <p>唯一的对外网络请求是获取网站图标（favicon），详见第 4 节。</p>
+  </div>
+
+  <h2>1. 开发者收集的数据</h2>
+  <p><strong>无。</strong></p>
+  <p>本项目不存在任何后端服务、账户体系、遥测或崩溃上报。开发者没有任何技术手段获取你的密码库、主密码、使用记录或设备信息。</p>
+  <p>具体而言，以下数据<strong>从不离开你的设备</strong>：</p>
+  <ul>
+    <li>主密码、PIN 码</li>
+    <li>密码库中的任何条目（用户名、密码、TOTP 密钥、附注、附件、银行卡与身份信息等）</li>
+    <li>加密密钥（MasterKey、UserKey）</li>
+    <li>你访问过的网址、填充记录、搜索关键词</li>
+    <li>任何形式的使用统计或错误日志</li>
+  </ul>
+
+  <h2>2. 数据存储位置</h2>
+  <p>所有数据仅存放在你本机的浏览器存储中。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>位置</th><th>内容</th><th>是否加密</th></tr></thead>
+    <tbody>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:data</code></td><td>密码库主体（全部条目与文件夹）</td><td>✅ 密文</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:meta</code></td><td>KDF 参数、随机 salt、被包裹的 UserKey；若启用 PIN，还包括 PIN 专用 salt 与 PIN 包裹的 UserKey</td><td>✅ 密钥为密文</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:settings</code></td><td>用户设置（锁定超时、主题、自动填充开关等）</td><td>明文（非敏感）</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:unlock-throttle</code></td><td>解锁失败次数与冷却时间戳</td><td>明文（非敏感）</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:last-used-login</code></td><td>最近一次填充的条目 ID（不含任何凭据内容）</td><td>明文（非敏感）</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:favicons:{域名}</code></td><td>缓存的网站图标（data URL）</td><td>明文（非敏感）</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:favicon-fail:{域名}</code></td><td>图标获取失败的冷却时间戳</td><td>明文（非敏感）</td></tr>
+      <tr><td><code>storage.session</code> → <code>vwo:session:userkey</code></td><td>解锁后的运行期密钥；浏览器会话结束即自动清除</td><td>仅存于会话存储</td></tr>
+      <tr><td><code>storage.session</code> → <code>vwo:session:last-activity</code></td><td>最近活动时间戳，用于超时锁定</td><td>明文（非敏感）</td></tr>
+      <tr><td>IndexedDB 数据库 <code>vwo-attachments</code></td><td>条目附件的二进制内容</td><td>✅ 密文</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>此外，当保存/更新凭据的提示条被你点击「忽略」时，扩展会在<strong>该网站页面自身的 <code>sessionStorage</code></strong> 中写入一个标记（键名形如 <code>vwo:declined:{主机名}:{用户名}</code>，值为 <code>1</code>），用于在本次浏览会话内不再重复打扰。该标记不含密码，且随标签页关闭而消失。</p>
+
+  <h2>3. 加密方式</h2>
+  <ul>
+    <li><strong>对称加密</strong>：AES-256-CBC + HMAC-SHA256（encrypt-then-MAC），与 Bitwarden / Vaultwarden 格式一致</li>
+    <li><strong>密钥派生</strong>：PBKDF2-SHA256（默认 600,000 次迭代）或 Argon2id（默认 iter=6、mem=32 MiB、par=4）</li>
+    <li><strong>密钥层级</strong>：主密码 → MasterKey →（HKDF 拉伸后）包裹/解开 UserKey → 逐字段加解密条目</li>
+    <li><strong>主密码与 PIN 从不被存储</strong>（哈希亦不存储）。密码是否正确，由解开 UserKey 包裹密文时的 MAC 校验决定</li>
+  </ul>
+  <div class="note">
+    <p>⚠️ <strong>重要</strong>：由于本扩展完全离线、不存在服务端托管，<strong>主密码一旦遗忘，密码库将无法恢复</strong>。请务必通过「设置 → 数据 → 导出」定期备份。</p>
+  </div>
+
+  <h2>4. 唯一的对外网络请求：站点图标</h2>
+  <p>为在列表中显示网站的真实图标，扩展会尝试获取 favicon，顺序如下：</p>
+  <ol>
+    <li><strong>优先同源获取</strong>：借助当前标签页的内容脚本，向你<strong>正在访问的那个网站</strong>请求其自身的图标（优先使用页面 <code>&lt;link rel="icon"&gt;</code> 声明的地址，失败则尝试 <code>/favicon.ico</code>）。此步骤不涉及任何第三方。</li>
+    <li><strong>回退至 Google</strong>：若上一步失败，请求 <code>https://www.google.com/s2/favicons?domain={域名}&amp;sz=64</code>。</li>
+    <li><strong>再回退至 DuckDuckGo</strong>：若仍失败，请求 <code>https://icons.duckduckgo.com/ip3/{域名}.ico</code>。</li>
+  </ol>
+  <div class="note">
+    <p><strong>请明确知悉</strong>：在第 2、3 步中，<strong>你保存在密码库中的网站域名（例如 <code>example.com</code>）会被发送给 Google 或 DuckDuckGo</strong>，同时这些请求会附带你的 IP 地址——这是任何 HTTP 请求的固有属性。</p>
+  </div>
+  <ul>
+    <li>发送的<strong>仅有域名本身</strong>，不包含用户名、密码、完整网址、路径或密码库中的任何其他内容。</li>
+    <li>整条链路失败后进入 <strong>6 小时冷却</strong>，期间不再重试。</li>
+    <li>获取时机：新增条目时，以及当前站点出现匹配条目时；均为静默后台执行，不阻塞任何交互。</li>
+  </ul>
+  <p>第三方隐私政策：<a href="https://policies.google.com/privacy" rel="noopener">Google 隐私权政策</a> · <a href="https://duckduckgo.com/privacy" rel="noopener">DuckDuckGo 隐私政策</a></p>
+  <p><strong>技术层面的约束</strong>：扩展的 manifest 中，内容安全策略（CSP）的 <code>connect-src</code> 仅放行上述三个域名，其余任何出网尝试都会被浏览器直接拒绝。此外，构建流程会扫描<strong>打包产物</strong>，一旦出现未经豁免的 <code>fetch</code> / <code>XMLHttpRequest</code> / <code>WebSocket</code> / <code>sendBeacon</code> 等调用，构建即失败。</p>
+
+  <h2>5. 自动填充如何处理页面数据</h2>
+  <ul>
+    <li>字段采集脚本<strong>不常驻</strong>任何页面，仅在你主动触发填充或检测时，由扩展临时注入执行。</li>
+    <li>采集内容仅为表单结构信息（字段类型、name/id/placeholder、标签文本、可见性等），用于判定"哪个框是用户名、哪个是密码"。这些信息<strong>不被存储、不被上传</strong>，用完即弃。</li>
+    <li><strong>明文密码只在「扩展后台 → 网页」这一跳中出现</strong>，不经过扩展弹窗界面（弹窗仅传递条目 ID）。</li>
+    <li>常驻的内容脚本仅有两个：保存提示条与输入框内联菜单。前者在你提交表单时读取用户名与密码并交给后台判断是否需要提示保存；后者只显示条目名称与用户名，<strong>绝不含密码</strong>。</li>
+    <li>保存/更新提示条<strong>绝不显示密码</strong>。</li>
+  </ul>
+
+  <h2>6. 权限用途说明</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>权限</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><code>storage</code></td><td>存储加密后的密码库与用户设置</td></tr>
+      <tr><td><code>unlimitedStorage</code></td><td>条目附件为加密二进制，可能超出默认存储配额</td></tr>
+      <tr><td><code>activeTab</code>、<code>scripting</code></td><td>在你主动触发填充时，向当前页面注入采集与填充脚本</td></tr>
+      <tr><td><code>tabs</code></td><td>读取当前标签页网址，以匹配对应的登录条目并更新图标角标</td></tr>
+      <tr><td><code>contextMenus</code></td><td>提供右键菜单填充入口</td></tr>
+      <tr><td><code>alarms</code></td><td>周期性检查无操作时长，到时自动锁定密码库</td></tr>
+      <tr><td><code>idle</code></td><td>当你选择「系统空闲时锁定」时，检测系统空闲状态</td></tr>
+      <tr><td><code>clipboardWrite</code></td><td>将用户名 / 密码 / 验证码复制到剪贴板（仅在你点击复制时）</td></tr>
+      <tr><td><code>host_permissions</code></td><td>自动填充需要在你访问的任意站点上运行；<code>file://</code> 需你在扩展详情页手动开启「允许访问文件网址」后才生效</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>7. 剪贴板</h2>
+  <p>点击复制按钮时，扩展会将对应内容写入系统剪贴板。<strong>本版本不提供剪贴板自动清除功能</strong>，复制的内容会一直保留在剪贴板中，直至被其他内容覆盖。复制密码后请注意及时清理。</p>
+
+  <h2>8. 数据的导出与删除</h2>
+  <ul>
+    <li><strong>导出</strong>：设置 → 数据 → 导出，支持 JSON（明文 / 密码保护）与 CSV，格式与 Bitwarden 官方一致，可直接导回 Bitwarden / Vaultwarden。</li>
+    <li><strong>清空条目</strong>：设置 → 数据 → 清空密码库数据（保留主密码与 PIN，得到空库）。</li>
+    <li><strong>彻底销毁</strong>：设置 → 数据 → 销毁本地密码库，或直接从浏览器卸载本扩展。卸载会一并移除扩展的全部存储数据，<strong>此操作不可恢复</strong>。</li>
+  </ul>
+
+  <h2>9. 第三方服务与数据共享</h2>
+  <p>除第 4 节所述的图标获取外，本扩展<strong>不与任何第三方共享数据</strong>，不接入任何分析、广告、崩溃上报或 A/B 测试服务，不出售或转让任何数据。</p>
+
+  <h2>10. 儿童隐私</h2>
+  <p>本扩展不收集任何用户数据，因此也不会收集儿童的个人信息。</p>
+
+  <h2>11. 政策变更</h2>
+  <p>本政策的任何修改都会更新本页顶部的日期，并通过 <a href="https://github.com/r0n9/vaultwarden-offline/commits/main/docs/PRIVACY.md" rel="noopener">Git 提交历史</a>完整留痕，可供随时查阅比对。</p>
+
+  <h2>12. 联系方式</h2>
+  <p>问题、疑虑或安全报告，请通过 GitHub Issues 提交：<br>
+  <a href="https://github.com/r0n9/vaultwarden-offline/issues" rel="noopener">github.com/r0n9/vaultwarden-offline/issues</a></p>
+  <p>本项目基于 <strong>GNU GPL-3.0</strong> 完全开源，上述所有陈述均可通过阅读源码验证：<br>
+  <a href="https://github.com/r0n9/vaultwarden-offline" rel="noopener">github.com/r0n9/vaultwarden-offline</a></p>
+
+</main>
+
+<!-- ==================== English ==================== -->
+<main id="en" hidden>
+
+  <div class="lede">
+    <p><strong>This extension collects nothing, uploads nothing, and sells nothing. The developer receives no information whatsoever — because this project has no server.</strong></p>
+    <p>The only outbound network request is for website icons (favicons); see Section 4.</p>
+  </div>
+
+  <h2>1. Data collected by the developer</h2>
+  <p><strong>None.</strong></p>
+  <p>There is no backend service, no account system, no telemetry, and no crash reporting. The developer has no technical means of accessing your vault, master password, usage history, or device information.</p>
+  <p>Specifically, the following <strong>never leave your device</strong>:</p>
+  <ul>
+    <li>Master password and PIN</li>
+    <li>Any vault item (usernames, passwords, TOTP secrets, notes, attachments, cards, identities, etc.)</li>
+    <li>Encryption keys (MasterKey, UserKey)</li>
+    <li>URLs you visit, autofill history, or search queries</li>
+    <li>Usage statistics or error logs of any kind</li>
+  </ul>
+
+  <h2>2. Where data is stored</h2>
+  <p>All data resides solely in your local browser storage.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Location</th><th>Contents</th><th>Encrypted</th></tr></thead>
+    <tbody>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:data</code></td><td>The vault itself (all items and folders)</td><td>✅ Ciphertext</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:meta</code></td><td>KDF parameters, random salt, wrapped UserKey; plus PIN salt and PIN-wrapped UserKey if a PIN is set</td><td>✅ Keys are ciphertext</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:settings</code></td><td>Preferences (lock timeout, theme, autofill toggles)</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:vault:unlock-throttle</code></td><td>Failed unlock count and cooldown timestamp</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:last-used-login</code></td><td>ID of the most recently filled item (no credential content)</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:favicons:{domain}</code></td><td>Cached site icon (data URL)</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td><code>storage.local</code> → <code>vwo:favicon-fail:{domain}</code></td><td>Cooldown timestamp after a failed icon fetch</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td><code>storage.session</code> → <code>vwo:session:userkey</code></td><td>Runtime key after unlocking; cleared automatically when the browser session ends</td><td>Session storage only</td></tr>
+      <tr><td><code>storage.session</code> → <code>vwo:session:last-activity</code></td><td>Last activity timestamp, used for timeout locking</td><td>Plaintext (non-sensitive)</td></tr>
+      <tr><td>IndexedDB database <code>vwo-attachments</code></td><td>Binary contents of item attachments</td><td>✅ Ciphertext</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Additionally, when you click "Ignore" on a save/update prompt, the extension writes a marker into <strong>the website page's own <code>sessionStorage</code></strong> (key of the form <code>vwo:declined:{hostname}:{username}</code>, value <code>1</code>) so it will not prompt you again during that browsing session. The marker contains no password and disappears when the tab is closed.</p>
+
+  <h2>3. Encryption</h2>
+  <ul>
+    <li><strong>Symmetric encryption</strong>: AES-256-CBC + HMAC-SHA256 (encrypt-then-MAC), identical to the Bitwarden / Vaultwarden format</li>
+    <li><strong>Key derivation</strong>: PBKDF2-SHA256 (600,000 iterations by default) or Argon2id (default iter=6, mem=32 MiB, par=4)</li>
+    <li><strong>Key hierarchy</strong>: master password → MasterKey → (HKDF-stretched) wraps/unwraps the UserKey → per-field encryption of items</li>
+    <li><strong>The master password and PIN are never stored</strong> (not even as a hash). Correctness is determined by whether the MAC verifies when unwrapping the UserKey</li>
+  </ul>
+  <div class="note">
+    <p>⚠️ <strong>Important</strong>: Because the extension is fully offline with no server-side custody, <strong>a forgotten master password means the vault cannot be recovered</strong>. Please back up regularly via Settings → Data → Export.</p>
+  </div>
+
+  <h2>4. The only outbound network request: site favicons</h2>
+  <p>To display real website icons in lists, the extension attempts to fetch favicons in this order:</p>
+  <ol>
+    <li><strong>Same-origin first</strong>: via the current tab's content script, it requests the icon from <strong>the website you are already visiting</strong> (preferring the address declared in the page's <code>&lt;link rel="icon"&gt;</code>, falling back to <code>/favicon.ico</code>). No third party is involved in this step.</li>
+    <li><strong>Google fallback</strong>: if step 1 fails, it requests <code>https://www.google.com/s2/favicons?domain={domain}&amp;sz=64</code>.</li>
+    <li><strong>DuckDuckGo fallback</strong>: if that also fails, it requests <code>https://icons.duckduckgo.com/ip3/{domain}.ico</code>.</li>
+  </ol>
+  <div class="note">
+    <p><strong>Please be explicitly aware</strong>: in steps 2 and 3, <strong>a domain name saved in your vault (e.g. <code>example.com</code>) is sent to Google or DuckDuckGo</strong>, and these requests carry your IP address — an inherent property of any HTTP request.</p>
+  </div>
+  <ul>
+    <li><strong>Only the bare domain</strong> is sent — never usernames, passwords, full URLs, paths, or any other vault content.</li>
+    <li>After the whole chain fails, a <strong>6-hour cooldown</strong> applies before retrying.</li>
+    <li>Timing: when an item is added, and when a matching item appears for the current site. Both run silently in the background and block no interaction.</li>
+  </ul>
+  <p>Third-party privacy policies: <a href="https://policies.google.com/privacy" rel="noopener">Google Privacy Policy</a> · <a href="https://duckduckgo.com/privacy" rel="noopener">DuckDuckGo Privacy Policy</a></p>
+  <p><strong>Technical enforcement</strong>: the extension's Content Security Policy allows <code>connect-src</code> to exactly those three hosts and nothing else — any other outbound attempt is rejected outright by the browser. In addition, the build pipeline scans the <strong>bundled output</strong> and fails the build if any non-exempted <code>fetch</code> / <code>XMLHttpRequest</code> / <code>WebSocket</code> / <code>sendBeacon</code> call is present.</p>
+
+  <h2>5. How autofill handles page data</h2>
+  <ul>
+    <li>Field-collection scripts are <strong>not persistently present</strong> on any page; they are injected temporarily only when you actively trigger a fill or a field detection.</li>
+    <li>What is collected is form structure only (field types, name/id/placeholder, label text, visibility) in order to determine which box is the username and which is the password. This information is <strong>never stored and never uploaded</strong>; it is discarded immediately after use.</li>
+    <li><strong>Plaintext passwords appear only on the hop from the extension's background service worker to the web page</strong> — never through the popup UI (the popup passes only an item ID).</li>
+    <li>Only two content scripts run persistently: the save prompt and the inline field menu. The former reads the username and password when you submit a form and hands them to the background worker to decide whether to offer to save; the latter displays only item names and usernames and <strong>never contains passwords</strong>.</li>
+    <li>The save/update prompt <strong>never displays a password</strong>.</li>
+  </ul>
+
+  <h2>6. Permission justifications</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Permission</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>storage</code></td><td>Store the encrypted vault and user preferences</td></tr>
+      <tr><td><code>unlimitedStorage</code></td><td>Item attachments are encrypted binaries that may exceed the default quota</td></tr>
+      <tr><td><code>activeTab</code>, <code>scripting</code></td><td>Inject collection and fill scripts into the current page when you trigger autofill</td></tr>
+      <tr><td><code>tabs</code></td><td>Read the current tab's URL to match the corresponding login item and update the toolbar badge</td></tr>
+      <tr><td><code>contextMenus</code></td><td>Provide a right-click menu entry for filling</td></tr>
+      <tr><td><code>alarms</code></td><td>Periodically check idle duration and lock the vault when the timeout is reached</td></tr>
+      <tr><td><code>idle</code></td><td>Detect system idle state when you choose "lock when the system is idle"</td></tr>
+      <tr><td><code>clipboardWrite</code></td><td>Copy username / password / verification code to the clipboard (only when you click copy)</td></tr>
+      <tr><td><code>host_permissions</code></td><td>Autofill must be able to run on any site you visit; <code>file://</code> takes effect only after you manually enable "Allow access to file URLs" on the extension's details page</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>7. Clipboard</h2>
+  <p>When you click a copy button, the extension writes the corresponding value to the system clipboard. <strong>This version does not provide automatic clipboard clearing</strong> — copied content remains on the clipboard until overwritten. Please clear it yourself after copying a password.</p>
+
+  <h2>8. Exporting and deleting your data</h2>
+  <ul>
+    <li><strong>Export</strong>: Settings → Data → Export. Supports JSON (plaintext / password-protected) and CSV, in the official Bitwarden format, importable straight back into Bitwarden / Vaultwarden.</li>
+    <li><strong>Clear items</strong>: Settings → Data → Clear vault data (keeps your master password and PIN, leaving an empty vault).</li>
+    <li><strong>Destroy completely</strong>: Settings → Data → Destroy local vault, or simply uninstall the extension from your browser. Uninstalling removes all of the extension's stored data. <strong>This is irreversible.</strong></li>
+  </ul>
+
+  <h2>9. Third parties and data sharing</h2>
+  <p>Apart from the favicon fetching described in Section 4, this extension <strong>shares no data with any third party</strong>. It integrates no analytics, advertising, crash reporting, or A/B testing services, and neither sells nor transfers any data.</p>
+
+  <h2>10. Children's privacy</h2>
+  <p>The extension collects no user data of any kind, and therefore collects no personal information from children.</p>
+
+  <h2>11. Changes to this policy</h2>
+  <p>Any change to this policy updates the date at the top of this page and is fully recorded in the <a href="https://github.com/r0n9/vaultwarden-offline/commits/main/docs/PRIVACY.md" rel="noopener">Git commit history</a>, available for inspection and comparison at any time.</p>
+
+  <h2>12. Contact</h2>
+  <p>For questions, concerns, or security reports, please open a GitHub issue:<br>
+  <a href="https://github.com/r0n9/vaultwarden-offline/issues" rel="noopener">github.com/r0n9/vaultwarden-offline/issues</a></p>
+  <p>This project is fully open source under the <strong>GNU GPL-3.0</strong>; every statement above can be verified by reading the source:<br>
+  <a href="https://github.com/r0n9/vaultwarden-offline" rel="noopener">github.com/r0n9/vaultwarden-offline</a></p>
+
+</main>
+
+<footer>
+  <p>Vaultwarden Offline · GNU GPL-3.0 · <a href="https://github.com/r0n9/vaultwarden-offline" rel="noopener">GitHub</a></p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var STRINGS = {
+    zh: {
+      htmlLang: "zh-CN",
+      title: "隐私政策",
+      meta: "最后更新：2026-08-23 · 适用版本：v2026.8.6 及以后",
+      docTitle: "隐私政策 — Vaultwarden Offline"
+    },
+    en: {
+      htmlLang: "en",
+      title: "Privacy Policy",
+      meta: "Last updated: 2026-08-23 · Applies to v2026.8.6 and later",
+      docTitle: "Privacy Policy — Vaultwarden Offline"
+    }
+  };
+
+  var buttons = document.querySelectorAll(".langbar button");
+  var panels = { zh: document.getElementById("zh"), en: document.getElementById("en") };
+  var titleEl = document.getElementById("title");
+  var metaEl = document.getElementById("meta");
+
+  function apply(lang) {
+    if (!STRINGS[lang]) { lang = "zh"; }
+    var s = STRINGS[lang];
+
+    panels.zh.hidden = lang !== "zh";
+    panels.en.hidden = lang !== "en";
+
+    document.documentElement.lang = s.htmlLang;
+    titleEl.textContent = s.title;
+    metaEl.textContent = s.meta;
+    document.title = s.docTitle;
+
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].dataset.lang === lang));
+    }
+
+    try { localStorage.setItem("vwo-privacy-lang", lang); } catch (e) { /* 隐私模式下不可用，忽略 */ }
+  }
+
+  // 优先级：URL 参数 > 上次选择 > 浏览器语言 > 中文
+  var initial = null;
+  var param = new URLSearchParams(location.search).get("lang");
+  if (param === "zh" || param === "en") {
+    initial = param;
+  }
+  if (!initial) {
+    try { initial = localStorage.getItem("vwo-privacy-lang"); } catch (e) { /* 忽略 */ }
+  }
+  if (initial !== "zh" && initial !== "en") {
+    initial = /^zh\b/i.test(navigator.language || "") ? "zh" : "en";
+  }
+  apply(initial);
+
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", function () {
+      apply(this.dataset.lang);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -142,6 +142,9 @@ CSP 与构建期校验对图标服务做了对应放行：`connect-src` 仅多
 `www.google.com`（s2 接口）、`*.gstatic.com`（Google favicon 重定向后的静态资源域，
 重定向会落在任意 tN 子域，故通配）、`icons.duckduckgo.com`（DuckDuckGo 回退源）。
 
+> 数据存放位置、加密方式、权限用途与上述网络例外的完整说明，见
+> **[隐私政策](https://r0n9.github.io/vaultwarden-offline/)**（[Markdown 版](docs/PRIVACY.md)）。
+
 ---
 
 ## 架构

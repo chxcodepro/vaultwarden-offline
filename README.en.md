@@ -165,6 +165,11 @@ The CSP and build-time checker allow exactly those icon-service domains: `www.go
 `*.gstatic.com` (Google's favicon redirect targets — the redirect can land on any `tN` subdomain),
 and `icons.duckduckgo.com`.
 
+> For the full account of where data is stored, how it is encrypted, what each permission is for,
+> and the network exception above, see the
+> **[Privacy Policy](https://r0n9.github.io/vaultwarden-offline/?lang=en)**
+> ([Markdown version](docs/PRIVACY.md)).
+
 ---
 
 ## Architecture
