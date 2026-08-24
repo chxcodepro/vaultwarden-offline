@@ -63,17 +63,28 @@
 
 ### 4. 唯一的对外网络请求：站点图标
 
-为在列表中显示网站的真实图标，扩展会尝试获取 favicon，顺序如下：
+为在列表中显示网站的真实图标，扩展会尝试获取 favicon。**获取方式由你自己决定**，在「设置 → 常规 → 网站图标」中可选三种：
 
-1. **优先同源获取**：借助当前标签页的内容脚本，向你**正在访问的那个网站**请求其自身的图标（优先使用页面 `<link rel="icon">` 声明的地址，失败则尝试 `/favicon.ico`）。此步骤不涉及任何第三方。
-2. **回退至 Google**：若上一步失败，请求 `https://www.google.com/s2/favicons?domain={域名}&sz=64`。
-3. **再回退至 DuckDuckGo**：若仍失败，请求 `https://icons.duckduckgo.com/ip3/{域名}.ico`。
+| 选项 | 行为 |
+|---|---|
+| **完全关闭** | 不发起任何图标请求，一律显示按条目类型的默认图标 |
+| **仅同源（默认）** | 只向你正在访问的那个站点索取它自己的图标，不涉及任何第三方 |
+| **同源 + 第三方回退** | 同源取不到时，回退至 Google / DuckDuckGo |
 
-**请明确知悉**：在第 2、3 步中，**你保存在密码库中的网站域名（例如 `example.com`）会被发送给 Google 或 DuckDuckGo**，同时这些请求会附带你的 IP 地址——这是任何 HTTP 请求的固有属性。
+**默认为「仅同源」。第三方回退默认关闭，必须由你显式开启。**
+
+具体顺序：
+
+1. **同源获取**（「仅同源」与「第三方回退」两种模式下均执行）：借助当前标签页的内容脚本，向你**正在访问的那个网站**请求其自身的图标（优先使用页面 `<link rel="icon">` 声明的地址，失败则尝试 `/favicon.ico`）。你本就在访问该站点，此步骤不涉及任何第三方，也不产生额外的信息披露。
+2. **回退至 Google**（仅在你开启「第三方回退」后执行）：请求 `https://www.google.com/s2/favicons?domain={域名}&sz=64`。
+3. **再回退至 DuckDuckGo**（同上）：请求 `https://icons.duckduckgo.com/ip3/{域名}.ico`。
+
+**若你选择开启第三方回退，请明确知悉**：在第 2、3 步中，**你保存在密码库中的网站域名（例如 `example.com`）会被发送给 Google 或 DuckDuckGo**，同时这些请求会附带你的 IP 地址——这是任何 HTTP 请求的固有属性。
 
 - 发送的**仅有域名本身**，不包含用户名、密码、完整网址、路径或密码库中的任何其他内容。
 - 整条链路失败后进入 **6 小时冷却**，期间不再重试。
 - 获取时机：新增条目时，以及当前站点出现匹配条目时；均为静默后台执行，不阻塞任何交互。
+- 设置页提供「清除已缓存图标」，可随时删除本地缓存的全部图标与失败记录。
 
 第三方隐私政策：
 [Google 隐私权政策](https://policies.google.com/privacy) · [DuckDuckGo 隐私政策](https://duckduckgo.com/privacy)
@@ -188,17 +199,28 @@ Additionally, when you click "Ignore" on a save/update prompt, the extension wri
 
 ### 4. The only outbound network request: site favicons
 
-To display real website icons in lists, the extension attempts to fetch favicons in this order:
+To display real website icons in lists, the extension attempts to fetch favicons. **You decide how**, under Settings → General → Site icons, with three choices:
 
-1. **Same-origin first**: via the current tab's content script, it requests the icon from **the website you are already visiting** (preferring the address declared in the page's `<link rel="icon">`, falling back to `/favicon.ico`). No third party is involved in this step.
-2. **Google fallback**: if step 1 fails, it requests `https://www.google.com/s2/favicons?domain={domain}&sz=64`.
-3. **DuckDuckGo fallback**: if that also fails, it requests `https://icons.duckduckgo.com/ip3/{domain}.ico`.
+| Option | Behaviour |
+|---|---|
+| **Off** | No icon request is ever made; every item shows its type's default icon |
+| **Same-origin only (default)** | Asks only the site you are currently visiting for its own icon; no third party involved |
+| **Same-origin + third-party fallback** | Falls back to Google / DuckDuckGo when same-origin yields nothing |
 
-**Please be explicitly aware**: in steps 2 and 3, **a domain name saved in your vault (e.g. `example.com`) is sent to Google or DuckDuckGo**, and these requests carry your IP address — an inherent property of any HTTP request.
+**The default is same-origin only. The third-party fallback is off by default and must be enabled by you explicitly.**
+
+The order in detail:
+
+1. **Same-origin** (runs in both the "same-origin only" and "third-party fallback" modes): via the current tab's content script, it requests the icon from **the website you are already visiting** (preferring the address declared in the page's `<link rel="icon">`, falling back to `/favicon.ico`). You are already visiting that site, so no third party is involved and no additional information is disclosed.
+2. **Google fallback** (only once you have enabled the third-party fallback): requests `https://www.google.com/s2/favicons?domain={domain}&sz=64`.
+3. **DuckDuckGo fallback** (likewise): requests `https://icons.duckduckgo.com/ip3/{domain}.ico`.
+
+**If you choose to enable the third-party fallback, please be explicitly aware**: in steps 2 and 3, **a domain name saved in your vault (e.g. `example.com`) is sent to Google or DuckDuckGo**, and these requests carry your IP address — an inherent property of any HTTP request.
 
 - **Only the bare domain** is sent — never usernames, passwords, full URLs, paths, or any other vault content.
 - After the whole chain fails, a **6-hour cooldown** applies before retrying.
 - Timing: when an item is added, and when a matching item appears for the current site. Both run silently in the background and block no interaction.
+- The settings screen offers "Clear cached icons", removing every locally cached icon and failure record at any time.
 
 Third-party privacy policies:
 [Google Privacy Policy](https://policies.google.com/privacy) · [DuckDuckGo Privacy Policy](https://duckduckgo.com/privacy)

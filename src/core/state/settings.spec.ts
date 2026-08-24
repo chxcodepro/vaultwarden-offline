@@ -44,6 +44,7 @@ describe("normalizeSettings", () => {
       vaultTimeout: 30,
       vaultTimeoutAction: "clear",
       theme: "system",
+      faviconMode: "sameOrigin",
     });
   });
 
@@ -75,5 +76,23 @@ describe("normalizeSettings", () => {
     expect(normalizeSettings({ vaultTimeoutAction: "delete-everything" }).vaultTimeoutAction).toBe(
       "lock",
     );
+  });
+
+  it("站点图标默认仅同源，非法值回落", () => {
+    // 默认值不能是 thirdParty：那会在用户毫不知情的情况下把密码库里的域名
+    // 发给 Google / DuckDuckGo，与商店描述「不联网」直接冲突。
+    expect(normalizeSettings(undefined).faviconMode).toBe("sameOrigin");
+    expect(normalizeSettings({ faviconMode: "off" }).faviconMode).toBe("off");
+    expect(normalizeSettings({ faviconMode: "thirdParty" }).faviconMode).toBe("thirdParty");
+    expect(normalizeSettings({ faviconMode: "everywhere" }).faviconMode).toBe("sameOrigin");
+  });
+
+  it("未登记的键被丢弃", () => {
+    // normalizeSettings 是白名单式重建：漏登记的新字段每次保存都会被静默丢掉，
+    // 这个用例把该契约钉住，免得日后加字段时只改了接口忘了改这里。
+    expect(normalizeSettings({ faviconMode: "off", bogus: 1 })).toEqual({
+      ...DEFAULT_SETTINGS,
+      faviconMode: "off",
+    });
   });
 });

@@ -107,6 +107,15 @@ export const storage = {
     async getMany(keys: string[]): Promise<Record<string, unknown>> {
       return await api().storage.local.get(keys);
     },
+    /**
+     * 列出全部键名。
+     *
+     * chrome.storage 没有前缀查询能力，按前缀批量清理（如清空 favicon 缓存）
+     * 只能先取回全部键再自行过滤。
+     */
+    async keys(): Promise<string[]> {
+      return Object.keys(await api().storage.local.get(null));
+    },
     async set(key: string, value: unknown): Promise<void> {
       await api().storage.local.set({ [key]: value });
     },

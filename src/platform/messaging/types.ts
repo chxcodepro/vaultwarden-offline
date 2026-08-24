@@ -121,6 +121,11 @@ export interface MessageContracts {
     request: { url: string };
     response: { ok: boolean };
   };
+  /** 清空图标缓存与失败冷却，返回清除的键数。 */
+  "favicon:clearCache": {
+    request: undefined;
+    response: { removed: number };
+  };
   "vault:hasPin": {
     request: undefined;
     response: { hasPin: boolean };

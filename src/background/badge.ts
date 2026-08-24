@@ -36,7 +36,7 @@ export async function updateMatchBadge(storage: VaultStorage): Promise<void> {
 
     // 站点有匹配条目时顺带静默获取并更新 favicon 缓存（不阻塞角标）。
     if (count > 0) {
-      void fetchFavicon(tab.url, tab.id);
+      void fetchFavicon(storage, tab.url, tab.id);
     }
 
     if (count === 0) {

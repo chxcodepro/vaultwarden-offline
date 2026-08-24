@@ -10,6 +10,7 @@
   import AutofillSettings from "./settings/AutofillSettings.svelte";
   import AutoLockSettings from "./settings/AutoLockSettings.svelte";
   import DataSettings from "./settings/DataSettings.svelte";
+  import FaviconSettings from "./settings/FaviconSettings.svelte";
   import FolderSettings from "./settings/FolderSettings.svelte";
   import PinSettings from "./settings/PinSettings.svelte";
   import SelfTestSettings from "./settings/SelfTestSettings.svelte";
@@ -153,6 +154,7 @@
       label: "常规",
       items: [
         { key: "appearance", title: "外观", desc: "跟随系统 / 浅色 / 深色" },
+        { key: "favicon", title: "网站图标", desc: "图标来源与隐私" },
         { key: "autolock", title: "自动锁定", desc: "锁定时机与超时动作" },
         { key: "autofill", title: "自动填充", desc: "字段检测与快捷键" },
         { key: "pin", title: "解锁方式", desc: "PIN 快捷解锁" },
@@ -172,6 +174,14 @@
 {#if screen === "appearance"}
   {#if settings != null}
     <AppearanceSettings
+      {settings}
+      onSaved={(next) => (settings = next)}
+      onBack={() => (screen = null)}
+    />
+  {/if}
+{:else if screen === "favicon"}
+  {#if settings != null}
+    <FaviconSettings
       {settings}
       onSaved={(next) => (settings = next)}
       onBack={() => (screen = null)}

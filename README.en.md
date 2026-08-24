@@ -17,7 +17,8 @@ your data is never locked into this extension.
 ## Features
 
 - **Fully offline** — no accounts, no sync, no telemetry; data lives only on your device
-  (the one exception: site favicon fetching, see [Offline Guarantee](#offline-guarantee))
+  (the one exception is site favicon fetching, whose third-party fallback is **off by default**;
+  see [Offline Guarantee](#offline-guarantee))
 - **100% compatible with Bitwarden / Vaultwarden** — cipher format and export files can be imported back
 - **Local encryption** — AES-256-CBC + HMAC-SHA256 (same as Bitwarden), unlock with master password or PIN
 - **Full autofill pipeline** — form collection (incl. Shadow DOM / iframes), field matching, fill execution,
@@ -26,7 +27,8 @@ your data is never locked into this extension.
   (verified against RFC 6238 official vectors, incl. Steam codes)
 - **Complete item management** — 8 item types, folders, trash, search & filters, favorites,
   password history, item-level re-prompt
-- **Real site favicons** — silently fetched and cached, falling back to a local initial-letter block
+- **Real site favicons** — three modes (off / same-origin only / same-origin + third-party
+  fallback), defaulting to same-origin only; falls back to a local per-type default icon
 
 ## Who It's For
 
@@ -52,7 +54,8 @@ recovery** (a forgotten master password is unrecoverable — that is the price o
 - **Verifiable format** — ciphertext is identical to Bitwarden's official format
   (AES-256-CBC + HMAC-SHA256), interoperable and cross-checkable, no black box
 - **Zero telemetry** — no analytics, no crash reporting; the only network call is
-  site favicon fetching (see [Offline Guarantee](#offline-guarantee)), auditable
+  site favicon fetching (see [Offline Guarantee](#offline-guarantee)), auditable and
+  switchable off — and the tier that touches third parties ships disabled
 - **Keys never leave your device** — master password, PIN, and UserKey are derived and
   used locally; no server ever sees the keys
 - **Portable** — export back to Vaultwarden / Bitwarden anytime; you're never locked in
@@ -146,22 +149,33 @@ Content scripts run under the host page's CSP and are not covered by #1 — that
 
 ### The One Network Exception: Site Favicons
 
-Fetching real site icons is an exception **explicitly exempted by the user**, and is not
-treated as a violation:
+Fetching real site icons is the one exception. How it fetches is chosen under
+Settings → General → Site icons, and the default is **same-origin only — the
+third-party fallback is off unless the user explicitly enables it**:
 
-- **Site first** — the content script fetches same-origin (no CORS needed),
-  preferring the `<link rel="icon">` address, falling back to `/favicon.ico`
-- **Fallback** — Google s2 favicon service (`www.google.com/s2/favicons`),
+| Option | Behaviour |
+|---|---|
+| Off | No icon request at all; everything shows its per-type default icon |
+| Same-origin only (default) | Asks only the site being visited for its own icon; no third party |
+| Same-origin + third-party fallback | Falls back to Google / DuckDuckGo when same-origin yields nothing |
+
+- **Site first** (runs in both enabled modes) — the content script fetches same-origin
+  (no CORS needed), preferring the `<link rel="icon">` address, falling back to
+  `/favicon.ico`. The user is already on that site, so nothing extra is disclosed
+- **Fallback** (opt-in) — Google s2 favicon service (`www.google.com/s2/favicons`),
   CORS-enabled, nearly 100% available; the trade-off is that domains are sent to Google
-- **Second fallback** — DuckDuckGo icons (`icons.duckduckgo.com/ip3/{domain}.ico`,
+- **Second fallback** (likewise) — DuckDuckGo icons (`icons.duckduckgo.com/ip3/{domain}.ico`,
   better reachability in mainland China, no redirects)
 - **Failure cooldown** — after the whole chain fails, no retry for 6 hours
-  (avoid hammering unreachable networks); a success clears the cooldown
+  (avoid hammering unreachable networks); a success clears the cooldown. If the failure
+  happened while the third-party fallback was off, enabling it retries immediately
+  instead of waiting the cooldown out
 - Timing: when adding an item or when a site match appears (silent, cached)
 - Cache: `storage.local` under `vwo:favicons:{domain}`; display checks the cache first,
-  falling back to a local initial-letter block
+  falling back to a local per-type default icon. The settings screen clears the whole cache
 
-The CSP and build-time checker allow exactly those icon-service domains: `www.google.com` (s2),
+The CSP and build-time checker allow exactly those icon-service domains (the code path always
+exists, it just does not run by default): `www.google.com` (s2),
 `*.gstatic.com` (Google's favicon redirect targets — the redirect can land on any `tN` subdomain),
 and `icons.duckduckgo.com`.
 

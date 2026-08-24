@@ -46,16 +46,43 @@ export const APPEARANCE_OPTIONS: ReadonlyArray<{ value: AppearanceTheme; label: 
   { value: AppearanceTheme.Dark, label: "深色" },
 ];
 
+/**
+ * 站点图标获取方式。
+ *
+ * off         一个网络请求都不发，全部显示按类型的默认图标
+ * sameOrigin  只向你正在访问的那个站点要它自己的图标（同源，不产生新的信息披露）
+ * thirdParty  同源失败后回退 Google s2 / DuckDuckGo
+ *
+ * 默认 `sameOrigin`：第三方回退会把**密码库里保存的域名**连同本机 IP 发给
+ * Google / DuckDuckGo，这与本扩展「不联网」的对外声明冲突，因此必须由用户
+ * 显式开启，不能默认替他做主。
+ */
+export const FaviconMode = {
+  Off: "off",
+  SameOrigin: "sameOrigin",
+  ThirdParty: "thirdParty",
+} as const;
+
+export type FaviconMode = (typeof FaviconMode)[keyof typeof FaviconMode];
+
+export const FAVICON_MODE_OPTIONS: ReadonlyArray<{ value: FaviconMode; label: string }> = [
+  { value: FaviconMode.Off, label: "完全关闭" },
+  { value: FaviconMode.SameOrigin, label: "仅同源（推荐）" },
+  { value: FaviconMode.ThirdParty, label: "同源 + 第三方回退" },
+];
+
 export interface Settings {
   vaultTimeout: VaultTimeout;
   vaultTimeoutAction: VaultTimeoutAction;
   theme: AppearanceTheme;
+  faviconMode: FaviconMode;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   vaultTimeout: 15,
   vaultTimeoutAction: VaultTimeoutAction.Lock,
   theme: AppearanceTheme.System,
+  faviconMode: FaviconMode.SameOrigin,
 };
 
 /** popup 下拉框可选项。 */
@@ -116,6 +143,11 @@ export function normalizeSettings(raw: unknown): Settings {
       candidate.theme === AppearanceTheme.Light || candidate.theme === AppearanceTheme.Dark
         ? candidate.theme
         : DEFAULT_SETTINGS.theme,
+    faviconMode:
+      candidate.faviconMode === FaviconMode.Off ||
+      candidate.faviconMode === FaviconMode.ThirdParty
+        ? candidate.faviconMode
+        : DEFAULT_SETTINGS.faviconMode,
   };
 }
 

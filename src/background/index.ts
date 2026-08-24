@@ -54,7 +54,7 @@ import {
 } from "./attachment-handler";
 import { getCipher } from "@/core/vault/vault-repository";
 import { commitSave, registerSaveTriggers, reportSaveAttempt } from "./save-detection";
-import { fetchFavicon } from "./favicon";
+import { clearFaviconCache, fetchFavicon } from "./favicon";
 import { registerBadgeTriggers, updateMatchBadge } from "./badge";
 import { pickShortcutTarget } from "./shortcut";
 
@@ -252,8 +252,10 @@ registerHandlers({
 
   "favicon:fetch": async ({ url }) => {
     const [tab] = await api().tabs.query({ active: true, currentWindow: true });
-    return { ok: await fetchFavicon(url, tab?.id) };
+    return { ok: await fetchFavicon(vaultStorage, url, tab?.id) };
   },
+
+  "favicon:clearCache": async () => ({ removed: await clearFaviconCache() }),
 
   "vault:hasPin": async () => ({ hasPin: await hasPin(vaultStorage) }),
 
