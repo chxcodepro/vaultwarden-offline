@@ -4,7 +4,8 @@
 本扩展**没有账户体系**，不存在「输入用户名和密码登录」这一流程——
 所有数据在本地创建、留在设备上。以下是审核员可完整走通核心功能的路径。
 
-建议提交英文版；中文版备查。英文版约 1880 字符（商店字段上限约 2000）。
+建议提交英文版；中文版备查。完整版 1870 字符适用于 2000 上限的主字段；
+若表单对应字段上限为 500 字符，使用文末的浓缩版。
 
 ---
 
@@ -86,6 +87,33 @@ NOTES:
 - 连续输错 3 次后解锁会被节流，等待时间递增（最长 5 分钟），请勿反复输错。
 - 默认不发起任何网络请求（图标仅同源）；扩展需要主机权限才能在任意站点运行，
   file:// 页面需在扩展详情页手动开启「允许访问文件网址」。
+```
+
+---
+
+## 500 字符浓缩版（用于上限 500 的字段）
+
+保留的优先级：无账户说明 → 创建密码库 → 自动填充路径 → 两个最易踩坑的警告
+（主密码不可恢复、解锁节流）。
+
+### English
+
+```
+No account system — no login. Click the toolbar icon → "Create vault", set a
+master password (e.g. TestPass123). Add a login item with URL
+https://httpbin.org. Open https://httpbin.org/forms/post, click the username
+field, pick the item from the ⚡ menu — fields are filled. Password generator:
+"Generator" tab. Remember the master password — it cannot be recovered. After
+3 failed unlock attempts, unlocking is throttled (up to 5 minutes).
+```
+
+### 中文
+
+```
+无账户体系，无需登录。点击工具栏图标 → 创建密码库，设置主密码（如 TestPass123）。
+添加一条登录条目，网址填 https://httpbin.org。打开 https://httpbin.org/forms/post，
+点击用户名字段，在 ⚡ 菜单选择该条目即完成填充。生成器标签可生成密码。
+主密码遗忘无法恢复，请牢记。连续输错 3 次解锁会被节流（最长 5 分钟）。
 ```
 
 ---
