@@ -221,21 +221,28 @@ https://github.com/r0n9/vaultwarden-offline
 
 ---
 
-## 五、待确认：摘要里的「不联网」
+## 五、摘要措辞：已收紧（记录备查）
 
-`public/_locales/*/messages.json` 的 `extDesc`（即商店摘要）目前写着：
+`public/_locales/*/messages.json` 的 `extDesc`（即商店摘要）原本写着「不联网 /
+always offline」。但默认模式下扩展仍会向**用户正在访问的那个站点**发起同源请求
+获取图标，所以这是一个绝对化表述，与实际行为存在细微出入——与 favicon 改造
+要解决的是同一类问题：描述必须对得上代码。
 
-- zh_CN：`……数据只存在你的设备上，不同步、不上传、不联网。`
-- en：`……always offline, never synced or uploaded.`
+已改为：
 
-严格地说，默认模式下扩展仍会向**用户正在访问的那个站点**发起同源请求获取图标，
-所以「不联网 / always offline」是一个绝对化的表述，与实际行为存在细微出入。
+| 位置 | 现文案 | 字数 |
+|---|---|---|
+| `_locales/zh_CN` extDesc | 守护你的每一枚密码：本地加密存放，解锁快捷、随时取用。数据只存在你的设备上，不同步、不上传、无遥测。 | 50 / 132 |
+| `_locales/en` extDesc | Protect every password. Your vault stays encrypted on your device — quick to unlock, never synced, never uploaded, zero telemetry. | 130 / 132 |
 
-这与本次 favicon 改造要解决的是同一类问题——描述与行为必须一致。是否收紧由你决定，
-建议改法：
+同批收紧的还有两个 README 的开篇标语（原为「不发起任何网络请求 / no network
+requests」，同样绝对化）：
 
-- zh_CN：`守护你的每一枚密码：本地加密存放，解锁快捷、随时取用。数据只存在你的设备上，不同步、不上传、无遥测。`
-- en：`Protect every password. Your vault stays encrypted on your device — quick to unlock, never synced, never uploaded, zero telemetry.`
+- `README.md`：完全离线的密码库浏览器插件。**无账户、无同步、无遥测。**
+- `README.en.md`：A fully offline password vault browser extension. **No accounts, no sync, zero telemetry.**
 
-把「不联网 / always offline」换成「无遥测 / zero telemetry」，卖点强度基本不变，
-但每个字都经得起对照代码检验。
+「无遥测 / zero telemetry」是可以逐字对照代码验证的——无统计上报、无崩溃回传、
+无第三方 SDK；而「不联网」不行。卖点强度基本不变。
+
+⚠️ 英文摘要 130/132，只剩 2 字符余量。日后若要再改，先数字数。
+

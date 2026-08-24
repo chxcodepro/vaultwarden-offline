@@ -1,6 +1,6 @@
 # Vaultwarden Offline
 
-A fully offline password vault browser extension. **No accounts, no sync, no network requests.**
+A fully offline password vault browser extension. **No accounts, no sync, zero telemetry.**
 
 Data comes from Bitwarden / Vaultwarden export files. After import it is stored locally in the browser
 using Bitwarden's cipher format, and can be exported back to Vaultwarden at any time —

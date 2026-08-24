@@ -101,7 +101,7 @@
         />
       </svg>
     </a>
-    <span class="badge" title="本扩展不发起任何网络请求">{t("offlineBadge")}</span>
+    <span class="badge" title="无账户、无同步、无遥测；数据只存在本机">{t("offlineBadge")}</span>
   </div>
 </header>
 

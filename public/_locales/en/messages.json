@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDesc": {
-    "message": "Protect every password. Your vault stays encrypted on your device — quick to unlock, always offline, never synced or uploaded.",
+    "message": "Protect every password. Your vault stays encrypted on your device — quick to unlock, never synced, never uploaded, zero telemetry.",
     "description": "Extension description"
   },
   "commandOpenPopup": {

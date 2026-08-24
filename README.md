@@ -1,6 +1,6 @@
 # Vaultwarden Offline
 
-完全离线的密码库浏览器插件。**无账户、无同步、不发起任何网络请求。**
+完全离线的密码库浏览器插件。**无账户、无同步、无遥测。**
 
 数据来自 Bitwarden / Vaultwarden 的导出文件，导入后以 Bitwarden 同款密文格式存放在浏览器本地，
 可随时导出回 Vaultwarden —— 数据不被锁死在本插件里。

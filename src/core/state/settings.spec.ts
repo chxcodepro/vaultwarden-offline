@@ -80,7 +80,7 @@ describe("normalizeSettings", () => {
 
   it("站点图标默认仅同源，非法值回落", () => {
     // 默认值不能是 thirdParty：那会在用户毫不知情的情况下把密码库里的域名
-    // 发给 Google / DuckDuckGo，与商店描述「不联网」直接冲突。
+    // 发给 Google / DuckDuckGo，与「数据不出设备」的对外主张直接冲突。
     expect(normalizeSettings(undefined).faviconMode).toBe("sameOrigin");
     expect(normalizeSettings({ faviconMode: "off" }).faviconMode).toBe("off");
     expect(normalizeSettings({ faviconMode: "thirdParty" }).faviconMode).toBe("thirdParty");

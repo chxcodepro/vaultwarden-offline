@@ -54,8 +54,8 @@ export const APPEARANCE_OPTIONS: ReadonlyArray<{ value: AppearanceTheme; label: 
  * thirdParty  同源失败后回退 Google s2 / DuckDuckGo
  *
  * 默认 `sameOrigin`：第三方回退会把**密码库里保存的域名**连同本机 IP 发给
- * Google / DuckDuckGo，这与本扩展「不联网」的对外声明冲突，因此必须由用户
- * 显式开启，不能默认替他做主。
+ * Google / DuckDuckGo，这与本扩展「数据不出设备」的对外主张冲突，因此必须由
+ * 用户显式开启，不能默认替他做主。
  */
 export const FaviconMode = {
   Off: "off",
