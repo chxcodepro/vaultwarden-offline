@@ -8,6 +8,8 @@ your data is never locked into this extension.
 
 > English · [中文](README.md)
 
+**📦 Available on the Chrome Web Store — [install it here](https://chromewebstore.google.com/detail/vaultwarden-offline/fkjcmkalggimmckbjndlbgpcmfbmpfpp)**
+
 ---
 
 <img src="vaultwarden-offline.png" alt="Vaultwarden Offline preview" width="100%">
@@ -61,6 +63,16 @@ recovery** (a forgotten master password is unrecoverable — that is the price o
 - **Portable** — export back to Vaultwarden / Bitwarden anytime; you're never locked in
 
 ## Quick Start (No Build Required)
+
+### Option 1: Chrome Web Store (recommended)
+
+Open the [Chrome Web Store page](https://chromewebstore.google.com/detail/vaultwarden-offline/fkjcmkalggimmckbjndlbgpcmfbmpfpp)
+→ click "Add to Chrome". It works right away and the browser keeps it updated.
+
+> Chromium-based browsers such as Edge and Opera can install from the Chrome Web Store
+> too (Edge first needs "Allow extensions from other stores" enabled on its extensions page).
+
+### Option 2: Manual load (Firefox, or if you'd rather skip the store)
 
 1. Open the [Releases page](https://github.com/r0n9/vaultwarden-offline/releases)
 2. Download the zip for your browser (`-chrome.zip` for Chrome/Edge/Opera,

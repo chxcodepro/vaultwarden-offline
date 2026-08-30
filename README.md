@@ -7,6 +7,8 @@
 
 > [English](README.en.md) · 中文
 
+**📦 已上架 Chrome 应用商店 —— [点此安装](https://chromewebstore.google.com/detail/vaultwarden-offline/fkjcmkalggimmckbjndlbgpcmfbmpfpp)**
+
 ---
 
 <img src="vaultwarden-offline.png" alt="Vaultwarden Offline 界面预览" width="100%">
@@ -48,6 +50,16 @@
 - **可移植**：随时导出回 Vaultwarden / Bitwarden，不被任何平台绑架
 
 ## 快速开始（无需构建）
+
+### 方式一：Chrome 应用商店（推荐）
+
+打开 [Chrome 应用商店页面](https://chromewebstore.google.com/detail/vaultwarden-offline/fkjcmkalggimmckbjndlbgpcmfbmpfpp)
+→ 点「添加至 Chrome」，装完即用，后续由浏览器自动更新。
+
+> Edge / Opera 等 Chromium 内核浏览器同样可以从 Chrome 应用商店安装
+> （Edge 需先在扩展页开启「允许来自其他应用商店的扩展」）。
+
+### 方式二：手动加载（Firefox，或不想走商店）
 
 1. 打开 [Releases 页](https://github.com/r0n9/vaultwarden-offline/releases)
 2. 下载对应浏览器的 zip（Chrome/Edge/Opera 用 `-chrome.zip`，Firefox 用 `-firefox.zip`）
