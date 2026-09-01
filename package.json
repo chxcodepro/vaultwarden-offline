@@ -10,6 +10,7 @@
     "build": "node scripts/build.mjs",
     "build:firefox": "TARGET=firefox node scripts/build.mjs",
     "icons": "node scripts/gen-icons.mjs",
+    "promo": "node scripts/gen-promo.mjs",
     "verify:offline": "node scripts/check-no-network.mjs",
     "check": "tsc --noEmit",
     "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
