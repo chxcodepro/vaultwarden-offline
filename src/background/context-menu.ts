@@ -5,10 +5,11 @@ import { cipherMatchesUrl } from "@/core/vault/uri-matching";
 import type { CipherView } from "@/core/vault/models";
 import { sortCiphersForUrl } from "@/core/vault/vault-search";
 import { getStatus, readVaultData, requireUserKey } from "@/core/vault/vault.service";
-import { api, runtime, t } from "@/platform/browser-api";
+import { api, t } from "@/platform/browser-api";
 import { logger } from "@/platform/logger";
 
 import { fillTab } from "./autofill-fill";
+import { promptUnlockForFill } from "./unlock-prompt";
 
 /**
  * 右键菜单。
@@ -161,9 +162,10 @@ export function registerContextMenu(storage: VaultStorage): void {
     void (async () => {
       try {
         if (info.menuItemId === MENU_OPEN_VAULT_ID) {
-          await api().tabs.create({
-            url: runtime.getURL("popup/index.html"),
-          });
+          // 该菜单项在三种状态下复用（未创建 / 已锁定 / 已解锁但无匹配），
+          // promptUnlockForFill 内部只在「已锁定」时记录待填充意图。
+          // 用监听器传入的 tab：右键的目标页不一定是当前活动页。
+          await promptUnlockForFill(storage, await getStatus(storage), tab);
           return;
         }
 

@@ -160,7 +160,16 @@ export interface MessageContracts {
   };
   "overlay:getMatches": {
     request: { url: string };
-    response: { items: OverlayMatch[] };
+    /**
+     * `locked` 让浮层能区分「库锁着」与「本站没有匹配条目」——
+     * 两者都返回空列表，但前者该引导解锁，后者该安静消失。
+     */
+    response: { items: OverlayMatch[]; locked: boolean };
+  };
+  /** 浮层 → background：用户在锁定提示上点了解锁，请求打开解锁界面。 */
+  "overlay:requestUnlock": {
+    request: undefined;
+    response: undefined;
   };
   "shortcut:getAutofill": {
     request: undefined;

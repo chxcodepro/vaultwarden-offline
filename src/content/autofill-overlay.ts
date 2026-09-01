@@ -120,32 +120,8 @@
     activeButton = { el: button, field };
   }
 
-  async function openMenu(field: HTMLElement, anchor: HTMLElement): Promise<void> {
-    if (menuOpen) {
-      hideAll();
-      return;
-    }
-
-    let items: { cipherId: string; name: string; username?: string }[] = [];
-    try {
-      const response = await chrome.runtime.sendMessage({
-        command: "overlay:getMatches",
-        payload: { url: window.location.href },
-      });
-      items = response?.items ?? [];
-    } catch {
-      // 背景页不可达（SW 休眠）：按钮已点击，直接静默失败。
-    }
-
-    if (items.length === 0) {
-      hideAll();
-      return;
-    }
-
-    // 按钮切换为展开态。
-    anchor.style.transform = "rotate(45deg)";
-    menuOpen = true;
-
+  /** 菜单外壳：定位与配色。匹配列表和锁定提示共用，避免两处样式各自漂移。 */
+  function createMenuShell(anchor: HTMLElement): HTMLElement {
     const menu = document.createElement("div");
     menu.setAttribute("data-vwo-overlay-menu", "true");
     const style = menu.style;
@@ -168,6 +144,113 @@
       spaceBelow > 280
         ? `${anchorRect.bottom + 4}px`
         : `${Math.max(anchorRect.top - 280, 4)}px`;
+
+    return menu;
+  }
+
+  /**
+   * 锁定态菜单。
+   *
+   * 从前这里是直接 hideAll()——按钮画在页面上，点开却什么都不发生，
+   * 用户没法分辨"库锁着"和"插件坏了"。现在给出解锁入口。
+   *
+   * 点击只负责打开解锁界面，**不记录待填充意图**：浮层的价值是让用户从多个
+   * 匹配条目里点选哪一条，解锁后替他自动挑一个恰好抹掉了这个价值。
+   */
+  function showLockedMenu(field: HTMLElement, anchor: HTMLElement): void {
+    anchor.style.transform = "rotate(45deg)";
+    menuOpen = true;
+
+    const menu = createMenuShell(anchor);
+
+    const row = document.createElement("button");
+    row.type = "button";
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.gap = "8px";
+    row.style.width = "100%";
+    row.style.padding = "9px 8px";
+    row.style.border = "none";
+    row.style.borderRadius = "6px";
+    row.style.background = "transparent";
+    row.style.color = "#f1f5f9";
+    row.style.fontSize = "12px";
+    row.style.fontFamily = "inherit";
+    row.style.cursor = "pointer";
+    row.style.textAlign = "left";
+    row.addEventListener("mouseenter", () => {
+      row.style.background = "#1e293b";
+    });
+    row.addEventListener("mouseleave", () => {
+      row.style.background = "transparent";
+    });
+
+    const glyph = document.createElement("span");
+    glyph.textContent = "🔒";
+    glyph.style.flex = "none";
+    glyph.style.fontSize = "14px";
+
+    const text = document.createElement("span");
+    text.style.flex = "1";
+    text.style.minWidth = "0";
+    const line1 = document.createElement("span");
+    line1.textContent = "密码库已锁定";
+    line1.style.display = "block";
+    const line2 = document.createElement("span");
+    line2.textContent = "点击解锁";
+    line2.style.display = "block";
+    line2.style.fontSize = "10px";
+    line2.style.color = "#94a3b8";
+    text.appendChild(line1);
+    text.appendChild(line2);
+
+    row.appendChild(glyph);
+    row.appendChild(text);
+    row.addEventListener("click", () => {
+      void chrome.runtime.sendMessage({ command: "overlay:requestUnlock" });
+      hideAll();
+    });
+
+    menu.appendChild(row);
+    document.documentElement.appendChild(menu);
+    activeMenu = { el: menu, field };
+  }
+
+  async function openMenu(field: HTMLElement, anchor: HTMLElement): Promise<void> {
+    if (menuOpen) {
+      hideAll();
+      return;
+    }
+
+    let items: { cipherId: string; name: string; username?: string }[] = [];
+    let locked = false;
+    try {
+      const response = await chrome.runtime.sendMessage({
+        command: "overlay:getMatches",
+        payload: { url: window.location.href },
+      });
+      items = response?.items ?? [];
+      locked = response?.locked === true;
+    } catch {
+      // 背景页不可达（SW 休眠）：按钮已点击，直接静默失败。
+      // locked 保持 false，按"没有匹配"处理——这是既有的容错行为。
+    }
+
+    if (locked) {
+      showLockedMenu(field, anchor);
+      return;
+    }
+
+    if (items.length === 0) {
+      hideAll();
+      return;
+    }
+
+    // 按钮切换为展开态。
+    anchor.style.transform = "rotate(45deg)";
+    menuOpen = true;
+
+    const menu = createMenuShell(anchor);
 
     const title = document.createElement("div");
     title.textContent = "自动填充";

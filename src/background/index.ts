@@ -57,6 +57,8 @@ import { commitSave, registerSaveTriggers, reportSaveAttempt } from "./save-dete
 import { clearFaviconCache, fetchFavicon } from "./favicon";
 import { registerBadgeTriggers, updateMatchBadge } from "./badge";
 import { pickShortcutTarget } from "./shortcut";
+import { consumePendingFill } from "./resume-fill";
+import { openUnlockUi, promptUnlockForFill } from "./unlock-prompt";
 
 /**
  * 背景 service worker。
@@ -198,7 +200,10 @@ registerHandlers({
   "vault:unlock": async ({ masterPassword }) => {
     try {
       await unlock(vaultStorage, masterPassword);
-      return { ok: true, value: { status: await currentStatusAndRefresh() } };
+      const status = await currentStatusAndRefresh();
+      // 不 await：解锁响应不该被填充耗时拖住，consumePendingFill 自行兜住异常。
+      void consumePendingFill(vaultStorage);
+      return { ok: true, value: { status } };
     } catch (e) {
       return failure(e);
     }
@@ -282,7 +287,9 @@ registerHandlers({
   "vault:unlockWithPin": async ({ pin }) => {
     try {
       await unlockWithPin(vaultStorage, pin);
-      return { ok: true, value: { status: await currentStatusAndRefresh() } };
+      const status = await currentStatusAndRefresh();
+      void consumePendingFill(vaultStorage);
+      return { ok: true, value: { status } };
     } catch (e) {
       return failure(e);
     }
@@ -320,16 +327,31 @@ registerHandlers({
 
   "overlay:getMatches": async ({ url }) => {
     if ((await getStatus(vaultStorage)) !== VaultStatus.Unlocked) {
-      return { items: [] };
+      // 如实告知锁定态：浮层据此显示解锁入口，而不是默默消失——
+      // 按钮已经画在页面上了，点了没反应看起来就是插件坏了。
+      return { items: [], locked: true };
     }
     const matches = await findMatchingLoginCiphers(vaultStorage, url);
     return {
+      locked: false,
       items: matches.map((cipher) => ({
         cipherId: cipher.id,
         name: cipher.name,
         username: cipher.login?.username,
       })),
     };
+  },
+
+  /**
+   * 浮层的解锁入口。
+   *
+   * 有意**不记录**待填充意图：浮层的价值在于让用户从多个匹配条目里点选哪一条，
+   * 解锁后替他自动挑一个，恰好抹掉了这个价值。用户解锁后自行再点一次 ⚡。
+   * 快捷键与右键菜单则相反——那两处本就是「直接填」的语义，见 promptUnlockForFill。
+   */
+  "overlay:requestUnlock": async () => {
+    await openUnlockUi();
+    return undefined;
   },
 
   "attachment:delete": async ({ cipherId, attachmentId }) => {
@@ -433,11 +455,16 @@ api().commands.onCommand.addListener((command) => {
       // 没有这样的记录时回退到当前站点匹配的第一条（收藏优先）。
       // 关键约束：自动触发的填充没有用户确认，条目必须匹配当前站点，
       // 否则等于把别的站的密码填进当前页——那正是钓鱼页面想要的结果。
-      if ((await getStatus(vaultStorage)) !== VaultStatus.Unlocked) {
+      const [tab] = await api().tabs.query({ active: true, currentWindow: true });
+
+      // 锁定态：记下意图并弹出解锁界面，解锁成功后由 resume-fill 接着填。
+      // 从前这里直接 return，用户按了键毫无反应，看起来就像快捷键失灵。
+      const status = await getStatus(vaultStorage);
+      if (status !== VaultStatus.Unlocked) {
+        await promptUnlockForFill(vaultStorage, status, tab);
         return;
       }
 
-      const [tab] = await api().tabs.query({ active: true, currentWindow: true });
       if (tab?.id == null || tab.url == null) {
         return;
       }

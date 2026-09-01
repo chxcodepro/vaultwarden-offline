@@ -212,7 +212,13 @@ export async function unlock(
 
 /** 锁定：丢弃运行期密钥，密文原样保留。 */
 export async function lock(storage: VaultStorage): Promise<void> {
-  await storage.session.remove([StorageKeys.SessionUserKey, StorageKeys.SessionLastActivity]);
+  // 待填充意图一并丢弃：锁定必须清空所有会话级意图，否则「锁定 → 解锁」
+  // 之间残留的旧意图会在下次解锁时意外触发填充。
+  await storage.session.remove([
+    StorageKeys.SessionUserKey,
+    StorageKeys.SessionLastActivity,
+    StorageKeys.SessionPendingFill,
+  ]);
 }
 
 /**

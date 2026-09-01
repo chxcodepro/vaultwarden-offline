@@ -19,6 +19,13 @@ export const StorageKeys = {
   SessionUserKey: "vwo:session:userkey",
   /** session：最近一次活动时间戳，用于超时锁定判定。 */
   SessionLastActivity: "vwo:session:last-activity",
+  /**
+   * session：锁定态下被打断的填充意图（标签页 + 地址 + 时间戳）。
+   *
+   * 放 session 而非 local：这是一次交互中途的临时状态，浏览器会话结束就该消失，
+   * 绝不能跨重启复活——那意味着一个早已失效的意图在下次启动时仍可能触发填充。
+   */
+  SessionPendingFill: "vwo:session:pending-fill",
 } as const;
 
 export type StorageKey = (typeof StorageKeys)[keyof typeof StorageKeys];
