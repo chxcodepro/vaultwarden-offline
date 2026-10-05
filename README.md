@@ -2,7 +2,7 @@
 
 完全离线的密码库浏览器插件。**无账户、无同步、无遥测。**
 
-数据来自 Bitwarden / Vaultwarden 的导出文件，导入后以 Bitwarden 同款密文格式存放在浏览器本地，
+数据来自 Bitwarden / Vaultwarden 导出文件或 Chrome 密码 CSV，导入后以 Bitwarden 同款密文格式存放在浏览器本地，
 可随时导出回 Vaultwarden —— 数据不被锁死在本插件里。
 
 > [English](README.en.md) · 中文
@@ -71,7 +71,7 @@
 > Firefox 的临时加载在重启浏览器后失效，需重新加载；Chrome 的已解压模式持续有效。
 
 **首次使用**：安装完成后打开插件，创建本地密码库时**二选一**——
-> - **从 Bitwarden / Vaultwarden 导出文件导入**：适合迁移，选文件 → 设本地主密码 → 数据直接入库
+> - **从 Chrome 密码 CSV 或 Bitwarden / Vaultwarden 导出文件导入**：适合迁移，选文件 → 设本地主密码 → 数据直接入库
 > - **直接创建空密码库**：从零开始，之后在插件里手动或通过自动填充保存新增条目
 >
 > 两者之后都可在「设置 → 数据」里随时导入/导出。

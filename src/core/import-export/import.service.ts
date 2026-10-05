@@ -5,6 +5,7 @@ import type { CipherView, FolderView } from "@/core/vault/models";
 
 import { looksLikeBitwardenCsv, parseBitwardenCsv } from "./bitwarden-csv";
 import { isPasswordProtected, looksLikeBitwardenJson, parseBitwardenJson } from "./bitwarden-json";
+import { looksLikeChromeCsv, parseChromeCsv } from "./chrome-csv";
 import {
   ImportError,
   ImportFormat,
@@ -43,11 +44,18 @@ export function probeImport(text: string, fileName = ""): ImportProbe {
     }
   }
 
-  if (fileName.toLowerCase().endsWith(".csv") || looksLikeBitwardenCsv(text)) {
+  if (looksLikeChromeCsv(text)) {
+    return { format: ImportFormat.ChromeCsv, requiresPassword: false };
+  }
+
+  if (looksLikeBitwardenCsv(text)) {
     return { format: ImportFormat.BitwardenCsv, requiresPassword: false };
   }
 
-  throw new ImportError("无法识别的文件格式。支持 Bitwarden / Vaultwarden 的 JSON 与 CSV 导出。");
+  if (fileName.toLowerCase().endsWith(".csv")) {
+    throw new ImportError("无法识别 CSV 列名。请选择 Chrome 密码 CSV 或 Bitwarden / Vaultwarden CSV 导出。");
+  }
+  throw new ImportError("无法识别的文件格式。支持 Chrome 密码 CSV，以及 Bitwarden / Vaultwarden 的 JSON 与 CSV 导出。");
 }
 
 export async function parseImport(
@@ -57,9 +65,14 @@ export async function parseImport(
 ): Promise<ParsedVault> {
   const probe = probeImport(text, fileName);
 
-  return probe.format === ImportFormat.BitwardenJson
-    ? await parseBitwardenJson(text, password)
-    : parseBitwardenCsv(text);
+  switch (probe.format) {
+    case ImportFormat.BitwardenJson:
+      return await parseBitwardenJson(text, password);
+    case ImportFormat.BitwardenCsv:
+      return parseBitwardenCsv(text);
+    case ImportFormat.ChromeCsv:
+      return parseChromeCsv(text);
+  }
 }
 
 /**

@@ -116,7 +116,7 @@
 <section>
   <h1>导入数据</h1>
   <p class="hint">
-    支持 Bitwarden / Vaultwarden 的 JSON（明文或密码保护）与 CSV 导出文件。
+    支持 Chrome 密码 CSV，以及 Bitwarden / Vaultwarden 的 JSON（明文或密码保护）与 CSV 导出文件。
   </p>
 
   <div class="field">

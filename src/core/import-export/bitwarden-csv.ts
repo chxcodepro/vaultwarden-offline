@@ -1,7 +1,7 @@
 import { CipherRepromptType, CipherType, FieldType } from "@/core/vault/enums";
 import type { CipherView, FolderView } from "@/core/vault/models";
 
-import { parseCsvRecords, serializeCsv } from "./csv";
+import { parseCsv, parseCsvRecords, serializeCsv } from "./csv";
 import type { ParsedVault } from "./types";
 
 /**
@@ -43,8 +43,9 @@ const CSV_TO_TYPE: Record<string, CipherType> = {
 };
 
 export function looksLikeBitwardenCsv(text: string): boolean {
-  const firstLine = text.slice(0, 500).split(/\r?\n/)[0] ?? "";
-  return firstLine.includes("name") && (firstLine.includes("login_password") || firstLine.includes("type"));
+  const header = parseCsv(text).find((row) => row.some((cell) => cell.trim() !== ""));
+  const columns = new Set(header?.map((name) => name.trim()));
+  return columns.has("name") && (columns.has("login_password") || columns.has("type"));
 }
 
 export function parseBitwardenCsv(text: string): ParsedVault {

@@ -2,7 +2,7 @@
 
 A fully offline password vault browser extension. **No accounts, no sync, zero telemetry.**
 
-Data comes from Bitwarden / Vaultwarden export files. After import it is stored locally in the browser
+Data comes from Bitwarden / Vaultwarden exports or Chrome password CSV files. After import it is stored locally in the browser
 using Bitwarden's cipher format, and can be exported back to Vaultwarden at any time —
 your data is never locked into this extension.
 
@@ -87,7 +87,7 @@ Open the [Chrome Web Store page](https://chromewebstore.google.com/detail/vaultw
 > mode persists.
 
 **First run**: after installation, open the extension and create your local vault — **either way**:
-> - **Import from a Bitwarden / Vaultwarden export file** — ideal for migration:
+> - **Import from a Chrome password CSV or Bitwarden / Vaultwarden export file** — ideal for migration:
 >   pick the file, set a local master password, data lands in your vault
 > - **Create an empty vault directly** — start from scratch, then add items manually
 >   or via autofill-save prompts

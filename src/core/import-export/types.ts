@@ -11,6 +11,7 @@ export interface ParsedVault {
 export const ImportFormat = {
   BitwardenJson: "bitwarden-json",
   BitwardenCsv: "bitwarden-csv",
+  ChromeCsv: "chrome-csv",
 } as const;
 
 export type ImportFormat = (typeof ImportFormat)[keyof typeof ImportFormat];

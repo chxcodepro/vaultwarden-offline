@@ -4,7 +4,7 @@
 
 | 决策 | 结论 |
 |---|---|
-| 数据来源 | 导入 Bitwarden / Vaultwarden 导出文件；无账户体系、无登录页 |
+| 数据来源 | 导入 Chrome 密码 CSV 或 Bitwarden / Vaultwarden 导出文件；无账户体系、无登录页 |
 | 数据格式 | 与 Bitwarden 100% 兼容，导出文件可直接导回 Vaultwarden |
 | 技术栈 | Vite + TypeScript + Svelte 5，MV3 |
 
@@ -51,6 +51,7 @@
 
 ### 导入导出（Phase 3）
 - 导入：Bitwarden/Vaultwarden JSON（明文 + 密码保护）、CSV
+- 导入：Chrome 密码 CSV，保留网址、用户名、密码与备注，导入后可匹配自动填充
 - 导出：JSON 明文 / JSON 密码保护 / CSV
 - 导入合并策略：跳过重复 / 覆盖 / 全部新增
 - 组织条目降级：`organizationId` / `collectionIds` 转为文件夹标签保留，不丢数据
@@ -84,7 +85,7 @@
 ## P1 — 第二阶段
 
 附件本地加密存储（IndexedDB）· 本地密码健康检查（弱/重复/过期）· 侧边栏模式 ·
-第三方导入器（Chrome / Firefox / KeePass2 / 1Password / LastPass / NordPass / ProtonPass）·
+其他第三方导入器（Firefox / KeePass2 / 1Password / LastPass / NordPass / ProtonPass）·
 修改主密码与 UserKey 轮换 · 剪贴板自动清除 · 页面加载自动填充
 
 ## P2 — 可选
