@@ -382,8 +382,7 @@ api().runtime.onInstalled.addListener((details) => {
 });
 
 api().runtime.onStartup.addListener(() => {
-  // 浏览器重启后 session 存储已自然清空，密码库必然处于锁定态，
-  // 这里只需把图标同步过来。"浏览器重启时锁定"就是靠这个特性实现的。
+  // session 已清空；仅“永不”模式可以使用本机保存的解锁密钥。
   void currentStatusAndRefresh();
 });
 

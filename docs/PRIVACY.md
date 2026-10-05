@@ -2,7 +2,7 @@
 
 **Vaultwarden Offline**
 
-最后更新 / Last updated: **2026-08-23**
+最后更新 / Last updated: **2026-10-05**
 适用版本 / Applies to: **v2026.8.6 及以后 / and later**
 
 [中文](#中文) · [English](#english)
@@ -44,6 +44,7 @@
 | `chrome.storage.local` → `vwo:settings` | 用户设置（锁定超时、主题、自动填充开关等） | 明文（非敏感） |
 | `chrome.storage.local` → `vwo:vault:unlock-throttle` | 解锁失败次数与冷却时间戳 | 明文（非敏感） |
 | `chrome.storage.local` → `vwo:last-used-login` | 最近一次填充的条目 ID（不含任何凭据内容） | 明文（非敏感） |
+| `chrome.storage.local` → `vwo:vault:remembered-userkey` | 仅选择「永不」锁定时保存的解锁密钥与密码库绑定信息；手动锁定、切回其他锁定方式或销毁密码库时删除 | **明文（敏感）** |
 | `chrome.storage.local` → `vwo:favicons:{域名}` | 缓存的网站图标（data URL） | 明文（非敏感） |
 | `chrome.storage.local` → `vwo:favicon-fail:{域名}` | 图标获取失败的冷却时间戳 | 明文（非敏感） |
 | `chrome.storage.session` → `vwo:session:userkey` | 解锁后的运行期密钥；浏览器会话结束即自动清除 | 仅存于会话存储 |
@@ -51,6 +52,8 @@
 | IndexedDB 数据库 `vwo-attachments` | 条目附件的二进制内容 | ✅ 密文 |
 
 此外，当保存/更新凭据的提示条被你点击「忽略」时，扩展会在**该网站页面自身的 `sessionStorage`** 中写入一个标记（键名形如 `vwo:declined:{主机名}:{用户名}`，值为 `1`），用于在本次浏览会话内不再重复打扰。该标记不含密码，且随标签页关闭而消失。
+
+**「永不」锁定包含浏览器重启后保持解锁。** 此模式不保存主密码或 PIN，但会在本机保存可直接解密密码库的 UserKey。能读取浏览器配置数据的人可绕过主密码解密密码库，因此仅建议在个人可信设备上使用。默认仍为 15 分钟无操作后锁定，不保存此密钥；手动锁定后仍需主密码或 PIN 再次解锁。
 
 ### 3. 加密方式
 
@@ -180,6 +183,7 @@ All data resides solely in your local browser storage.
 | `chrome.storage.local` → `vwo:settings` | Preferences (lock timeout, theme, autofill toggles) | Plaintext (non-sensitive) |
 | `chrome.storage.local` → `vwo:vault:unlock-throttle` | Failed unlock count and cooldown timestamp | Plaintext (non-sensitive) |
 | `chrome.storage.local` → `vwo:last-used-login` | ID of the most recently filled item (no credential content) | Plaintext (non-sensitive) |
+| `chrome.storage.local` → `vwo:vault:remembered-userkey` | Unlock key and vault binding, saved only with "Never" locking; removed on manual lock, switching to another lock policy, or vault destruction | **Plaintext (sensitive)** |
 | `chrome.storage.local` → `vwo:favicons:{domain}` | Cached site icon (data URL) | Plaintext (non-sensitive) |
 | `chrome.storage.local` → `vwo:favicon-fail:{domain}` | Cooldown timestamp after a failed icon fetch | Plaintext (non-sensitive) |
 | `chrome.storage.session` → `vwo:session:userkey` | Runtime key after unlocking; cleared automatically when the browser session ends | Session storage only |
@@ -187,6 +191,8 @@ All data resides solely in your local browser storage.
 | IndexedDB database `vwo-attachments` | Binary contents of item attachments | ✅ Ciphertext |
 
 Additionally, when you click "Ignore" on a save/update prompt, the extension writes a marker into **the website page's own `sessionStorage`** (key of the form `vwo:declined:{hostname}:{username}`, value `1`) so it will not prompt you again during that browsing session. The marker contains no password and disappears when the tab is closed.
+
+**"Never" locking keeps the vault unlocked across browser restarts.** It does not store the master password or PIN, but it stores a UserKey that can decrypt the vault directly. Anyone who can read the browser profile data can bypass the master password and decrypt the vault, so use this only on a trusted personal device. The default remains a 15-minute inactivity lock without a saved key; after a manual lock, the master password or PIN is required again.
 
 ### 3. Encryption
 

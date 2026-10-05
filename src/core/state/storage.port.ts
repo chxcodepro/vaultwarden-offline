@@ -12,7 +12,7 @@ export interface KeyValueStore {
 }
 
 export interface VaultStorage {
-  /** 持久化，存密文与非敏感设置。 */
+  /** 持久化，存密文与设置；“永不”模式另存明文解锁密钥。 */
   local: KeyValueStore;
   /** 随浏览器会话存活，存解锁后的运行期密钥。 */
   session: KeyValueStore;

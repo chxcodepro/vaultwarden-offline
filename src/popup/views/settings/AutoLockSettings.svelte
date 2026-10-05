@@ -2,6 +2,7 @@
   import {
     VAULT_TIMEOUT_OPTIONS,
     VaultTimeoutAction,
+    VaultTimeoutType,
     type Settings,
     type VaultTimeout,
   } from "@/core/state/settings";
@@ -36,11 +37,21 @@
   <section class="panel">
     <div class="field">
       <label for="timeout">锁定时机</label>
-      <select id="timeout" value={String(settings.vaultTimeout)} onchange={updateTimeout}>
+      <select
+        id="timeout"
+        value={String(settings.vaultTimeout)}
+        onchange={updateTimeout}
+        aria-describedby={settings.vaultTimeout === VaultTimeoutType.Never ? "never-warning" : undefined}
+      >
         {#each VAULT_TIMEOUT_OPTIONS as option (option.value)}
           <option value={String(option.value)}>{option.label}</option>
         {/each}
       </select>
+      {#if settings.vaultTimeout === VaultTimeoutType.Never}
+        <p id="never-warning" class="hint invalid">
+          重启后仍保持解锁。解锁密钥会以明文保存在本机，能读取浏览器数据的人可解密密码库。仅建议在个人可信设备上使用。
+        </p>
+      {/if}
     </div>
 
     <div class="field">

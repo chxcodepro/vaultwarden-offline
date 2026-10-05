@@ -10,7 +10,7 @@ export const VaultTimeoutType = {
   OnRestart: "onRestart",
   /** 系统进入空闲状态时锁定。 */
   OnIdle: "onIdle",
-  /** 永不自动锁定。 */
+  /** 永不自动锁定，包括浏览器重启；需在本机保存解锁密钥。 */
   Never: "never",
 } as const;
 

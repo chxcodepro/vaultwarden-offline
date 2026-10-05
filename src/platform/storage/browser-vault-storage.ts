@@ -1,4 +1,5 @@
-import { storage } from "@/platform/browser-api";
+import { api, storage } from "@/platform/browser-api";
+import { StorageKeys } from "@/core/state/storage-keys";
 import type { KeyValueStore, VaultStorage } from "@/core/state/storage.port";
 
 /**
@@ -10,7 +11,14 @@ import type { KeyValueStore, VaultStorage } from "@/core/state/storage.port";
 
 const localStore: KeyValueStore = {
   get: (key) => storage.local.get(key),
-  set: (key, value) => storage.local.set(key, value),
+  set: async (key, value) => {
+    if (key === StorageKeys.RememberedUserKey) {
+      // Chromium exposes local storage to content scripts by default. Restrict
+      // access before writing a plaintext key; Firefox has no such API.
+      await api().storage.local.setAccessLevel?.({ accessLevel: "TRUSTED_CONTEXTS" });
+    }
+    await storage.local.set(key, value);
+  },
   remove: (key) => storage.local.remove(key),
 };
 

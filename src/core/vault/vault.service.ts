@@ -13,7 +13,7 @@ import {
 } from "@/core/crypto";
 
 import { StorageKeys } from "../state/storage-keys";
-import { type Settings, normalizeSettings } from "../state/settings";
+import { type Settings, VaultTimeoutType, normalizeSettings } from "../state/settings";
 import type { VaultStorage } from "../state/storage.port";
 import { VaultStatus } from "../state/vault-status";
 
@@ -24,8 +24,8 @@ import { type VaultData, emptyVaultData } from "./models";
  *
  * ## 三态
  *   Uninitialized  本地没有 meta，还没有密码库
- *   Locked         有 meta 但 session 里没有 UserKey，密文读不了
- *   Unlocked       session 里有 UserKey
+ *   Locked         有 meta 但没有可用的 UserKey，密文读不了
+ *   Unlocked       session 有 UserKey，或“永不”模式有本机保存的 UserKey
  *
  * 状态**不缓存在内存变量里**，每次都从存储现算 —— MV3 的 service worker 随时
  * 会被回收重启，任何内存状态都不可信。
@@ -63,6 +63,12 @@ interface ThrottleState {
   failedAttempts: number;
   /** 时间戳；在此之前拒绝任何解锁尝试。 */
   lockedUntil?: number;
+}
+
+interface RememberedUserKey {
+  userKey: string;
+  /** Bind the remembered key to the current vault and master-password wrapping. */
+  wrappedUserKey: string;
 }
 
 export class VaultLockedError extends Error {
@@ -106,8 +112,8 @@ export async function getStatus(storage: VaultStorage): Promise<VaultStatus> {
   if ((await getMeta(storage)) == null) {
     return VaultStatus.Uninitialized;
   }
-  const sessionKey = await storage.session.get<string>(StorageKeys.SessionUserKey);
-  return sessionKey == null ? VaultStatus.Locked : VaultStatus.Unlocked;
+  const userKey = await getSessionUserKey(storage);
+  return userKey == null ? VaultStatus.Locked : VaultStatus.Unlocked;
 }
 
 /** 取运行期 UserKey；未解锁返回 undefined。 */
@@ -115,7 +121,29 @@ export async function getSessionUserKey(
   storage: VaultStorage,
 ): Promise<SymmetricCryptoKey | undefined> {
   const raw = await storage.session.get<string>(StorageKeys.SessionUserKey);
-  return raw == null ? undefined : new SymmetricCryptoKey(fromBase64(raw));
+  if (raw != null) {
+    return new SymmetricCryptoKey(fromBase64(raw));
+  }
+  if ((await getSettings(storage)).vaultTimeout !== VaultTimeoutType.Never) {
+    return undefined;
+  }
+
+  const meta = await getMeta(storage);
+  const remembered = await storage.local.get<RememberedUserKey>(StorageKeys.RememberedUserKey);
+  if (
+    meta == null ||
+    remembered == null ||
+    typeof remembered.userKey !== "string" ||
+    remembered.wrappedUserKey !== meta.wrappedUserKey
+  ) {
+    return undefined;
+  }
+  try {
+    const bytes = fromBase64(remembered.userKey);
+    return bytes.length === 64 ? new SymmetricCryptoKey(bytes) : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** 取运行期 UserKey，未解锁则抛错。供必须在解锁态执行的操作使用。 */
@@ -212,6 +240,7 @@ export async function unlock(
 
 /** 锁定：丢弃运行期密钥，密文原样保留。 */
 export async function lock(storage: VaultStorage): Promise<void> {
+  await storage.local.remove(StorageKeys.RememberedUserKey);
   // 待填充意图一并丢弃：锁定必须清空所有会话级意图，否则「锁定 → 解锁」
   // 之间残留的旧意图会在下次解锁时意外触发填充。
   await storage.session.remove([
@@ -274,6 +303,23 @@ async function startSession(
 ): Promise<void> {
   await storage.session.set(StorageKeys.SessionUserKey, userKey.toBase64());
   await storage.session.set(StorageKeys.SessionLastActivity, now);
+  await rememberUserKey(storage, userKey, (await getSettings(storage)).vaultTimeout);
+}
+
+async function rememberUserKey(
+  storage: VaultStorage,
+  userKey: SymmetricCryptoKey | undefined,
+  timeout: Settings["vaultTimeout"],
+): Promise<void> {
+  const meta = timeout === VaultTimeoutType.Never ? await getMeta(storage) : undefined;
+  if (userKey == null || meta == null) {
+    await storage.local.remove(StorageKeys.RememberedUserKey);
+    return;
+  }
+  await storage.local.set(StorageKeys.RememberedUserKey, {
+    userKey: userKey.toBase64(),
+    wrappedUserKey: meta.wrappedUserKey,
+  } satisfies RememberedUserKey);
 }
 
 /** 刷新活动时间戳，推迟超时锁定。 */
@@ -281,7 +327,7 @@ export async function touchActivity(
   storage: VaultStorage,
   now: number = Date.now(),
 ): Promise<void> {
-  if ((await storage.session.get(StorageKeys.SessionUserKey)) == null) {
+  if ((await getSessionUserKey(storage)) == null) {
     return;
   }
   await storage.session.set(StorageKeys.SessionLastActivity, now);
@@ -323,6 +369,7 @@ export async function changeMasterPassword(
     wrappedUserKey: (await wrapKey(userKey, nextMasterKey)).toString(),
     updatedAt: new Date().toISOString(),
   } satisfies VaultMeta);
+  await rememberUserKey(storage, userKey, (await getSettings(storage)).vaultTimeout);
 }
 
 // --- 设置 -----------------------------------------------------------------
@@ -336,6 +383,14 @@ export async function saveSettings(
   settings: Partial<Settings>,
 ): Promise<Settings> {
   const merged = normalizeSettings({ ...(await getSettings(storage)), ...settings });
+  const userKey = await getSessionUserKey(storage);
+  // After a restart the key may exist only in local storage. Keep this browser
+  // session unlocked when switching back to a timeout, but remove restart access.
+  if (userKey != null && (await storage.session.get(StorageKeys.SessionUserKey)) == null) {
+    await storage.session.set(StorageKeys.SessionUserKey, userKey.toBase64());
+    await storage.session.set(StorageKeys.SessionLastActivity, Date.now());
+  }
+  await rememberUserKey(storage, userKey, merged.vaultTimeout);
   await storage.local.set(StorageKeys.Settings, merged);
   return merged;
 }

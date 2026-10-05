@@ -311,6 +311,152 @@ describe("会话与活动时间", () => {
   });
 });
 
+describe("跨浏览器重启保持解锁", () => {
+  function restartBrowser(): VaultStorage {
+    return { local: storage.local, session: createMemoryStorage().session };
+  }
+
+  it.each([15, VaultTimeoutType.Immediately, VaultTimeoutType.OnIdle, VaultTimeoutType.OnRestart])(
+    "%s 模式重启后仍锁定，且不保存明文密钥",
+    async (vaultTimeout) => {
+      await saveSettings(storage, { vaultTimeout });
+      await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+
+      expect(await storage.local.get(StorageKeys.RememberedUserKey)).toBeUndefined();
+      expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+    },
+  );
+
+  it("已解锁时切到永不，重启后使用同一把 UserKey 且不恢复填充意图", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    const originalKey = (await requireUserKey(storage)).toBase64();
+    await storage.session.set(StorageKeys.SessionPendingFill, { tabId: 42 });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+
+    storage = restartBrowser();
+
+    expect(await getStatus(storage)).toBe(VaultStatus.Unlocked);
+    expect((await requireUserKey(storage)).toBase64()).toBe(originalKey);
+    expect(await storage.session.get(StorageKeys.SessionPendingFill)).toBeUndefined();
+  });
+
+  it("永不模式创建密码库时保存密钥", async () => {
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Unlocked);
+  });
+
+  it("手动锁定删除保存的密钥，重启不会自动解锁", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    storage = restartBrowser();
+    await lock(storage);
+
+    expect(await storage.local.get(StorageKeys.RememberedUserKey)).toBeUndefined();
+    expect(await getStatus(storage)).toBe(VaultStatus.Locked);
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+    await expect(requireUserKey(storage)).rejects.toThrow(/锁定状态/);
+  });
+
+  it("主密码重新解锁后再次保留跨重启访问", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    await lock(storage);
+    await unlock(storage, "master-pass1");
+
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Unlocked);
+  });
+
+  it("PIN 重新解锁后也保留跨重启访问", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await setPin(storage, "2468");
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    await lock(storage);
+    const userKey = await unlockWithPin(storage, "2468");
+
+    expect((await requireUserKey(restartBrowser())).toBase64()).toBe(userKey.toBase64());
+  });
+
+  it("重启后关闭永不，当前会话保持解锁但下次重启锁定", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    storage = restartBrowser();
+    await saveSettings(storage, { vaultTimeout: 15 });
+
+    expect(await getStatus(storage)).toBe(VaultStatus.Unlocked);
+    expect(await getLastActivity(storage)).toBeTypeOf("number");
+    expect(await storage.local.get(StorageKeys.RememberedUserKey)).toBeUndefined();
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+  });
+
+  it("重启后更新无关设置不会丢失跨重启访问", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    storage = restartBrowser();
+    await saveSettings(storage, { vaultTimeoutAction: "clear" });
+
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Unlocked);
+  });
+
+  it("锁定时改设置不能绕过密码解锁", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await lock(storage);
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+
+    expect(await getStatus(storage)).toBe(VaultStatus.Locked);
+    expect(await storage.local.get(StorageKeys.RememberedUserKey)).toBeUndefined();
+  });
+
+  it("修改主密码同步更新保存的密钥绑定，手动锁定后旧密码仍失效", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    const originalKey = (await requireUserKey(storage)).toBase64();
+    await changeMasterPassword(storage, "master-pass1", "new-pass1");
+    storage = restartBrowser();
+
+    expect((await requireUserKey(storage)).toBase64()).toBe(originalKey);
+    await lock(storage);
+    await expect(unlock(storage, "master-pass1")).rejects.toThrow(InvalidMasterPasswordError);
+    await unlock(storage, "new-pass1");
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Unlocked);
+  });
+
+  it("销毁并重建密码库不能复用旧密钥", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    const oldRemembered = await storage.local.get(StorageKeys.RememberedUserKey);
+    await clearVault(storage);
+    expect(await storage.local.get(StorageKeys.RememberedUserKey)).toBeUndefined();
+    await createVault(storage, "new-pass1", { kdf: FAST_KDF });
+    await storage.local.set(StorageKeys.RememberedUserKey, oldRemembered);
+
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+  });
+
+  it.each(["not-base64!", "AQID", "A".repeat(44), null, 123])(
+    "损坏的保存密钥 %s 不会导致自动解锁或状态查询报错",
+    async (userKey) => {
+      await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+      await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+      await storage.local.set(StorageKeys.RememberedUserKey, {
+        userKey,
+        wrappedUserKey: (await getMeta(storage))?.wrappedUserKey,
+      });
+
+      expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+    },
+  );
+
+  it("非永不设置忽略残留保存密钥", async () => {
+    await createVault(storage, "master-pass1", { kdf: FAST_KDF });
+    await saveSettings(storage, { vaultTimeout: VaultTimeoutType.Never });
+    await storage.local.set(StorageKeys.Settings, { vaultTimeout: 15 });
+
+    expect(await getStatus(restartBrowser())).toBe(VaultStatus.Locked);
+  });
+});
+
 describe("清空数据", () => {
   it("清空条目与文件夹，保留密码库结构与主密码", async () => {
     await createVault(storage, "master-pass1", { kdf: FAST_KDF });

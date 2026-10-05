@@ -94,7 +94,7 @@ export function addListener<T extends (...args: never[]) => unknown>(
 // ---------------------------------------------------------------------------
 
 /**
- * `local`：持久化，存放**密文**。即便被读取也无法还原明文。
+ * `local`：持久化，通常存放密文与设置；“永不”模式还会保存明文解锁密钥。
  * `session`：随浏览器会话存活，MV3 下 service worker 重启不丢，存放解锁后的
  *            运行期密钥。默认访问级别为 TRUSTED_CONTEXTS，content script 读不到。
  */

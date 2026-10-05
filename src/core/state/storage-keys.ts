@@ -15,6 +15,8 @@ export const StorageKeys = {
   UnlockThrottle: "vwo:vault:unlock-throttle",
   /** local：最近一次填充过的登录条目 id，快捷键「填充上次使用」靠它。 */
   LastUsedLogin: "vwo:last-used-login",
+  /** local：仅“永不”模式保存的明文 UserKey 与密码库绑定信息；锁定时删除。 */
+  RememberedUserKey: "vwo:vault:remembered-userkey",
   /** session：解锁后的 UserKey，浏览器会话结束即消失。 */
   SessionUserKey: "vwo:session:userkey",
   /** session：最近一次活动时间戳，用于超时锁定判定。 */
