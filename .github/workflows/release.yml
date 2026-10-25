@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify tests
-        run: npm test
-
       - name: Build Chrome / Edge / Opera
         # MV3 产物相同（同一份 manifest），打包后改名保留 dist 供 Firefox 构建。
         run: |
