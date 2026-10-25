@@ -131,6 +131,7 @@
     style.maxWidth = "280px";
     style.maxHeight = "260px";
     style.overflowY = "auto";
+    style.overscrollBehaviorY = "contain";
     style.background = "#0f172a";
     style.borderRadius = "8px";
     style.boxShadow = "0 8px 24px rgba(0,0,0,.35)";
@@ -376,7 +377,16 @@
     true,
   );
 
-  window.addEventListener("scroll", hideAll, true);
+  window.addEventListener(
+    "scroll",
+    (event) => {
+      if (event.target instanceof Node && activeMenu?.el.contains(event.target)) {
+        return;
+      }
+      hideAll();
+    },
+    true,
+  );
   window.addEventListener("resize", hideAll);
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
